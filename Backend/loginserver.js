@@ -13,7 +13,7 @@ const db = mysql.createConnection({
     database: "userdatas"
 })
 
-app.post('/userdatas', (req,res)=> {
+app.post('/signup', (req,res)=> {
     const sql = "INSERT INTO mydata (`name`,`email`,`password`)VALUES (?)";
     const values = [
         req.body.name,
@@ -29,6 +29,20 @@ app.post('/userdatas', (req,res)=> {
     })
 })
 
-app.listen(8080,()=>{
+app.post('/login', (req,res)=> {
+    const sql = "SELECT * FROM mydata WHERE `email` = ? AND `password` = ?";
+    db.query(sql, [req.body.email,req.body.password ],(err, data) => {
+        if(err){
+            return res.json("Error")
+        }
+        if(data.length > 0){
+            return res.json("success");
+        } else {
+            return res.json("fail")
+        }
+    })
+})
+
+app.listen(8000,()=>{
     console.log("listening")
 })

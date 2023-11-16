@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import validation from './Loginvalidation'
+import axios from 'axios'
 
 function Login() {
     const [values, setValues]=useState({
         email:'',
         password:''
     })
+    const navigate=useNavigate()
     const[errors,setErrors] = useState({})
     const handleInput=(event) => {
         setValues(prev => ({...prev, [event.target.name]: [event.target.value]}))
@@ -14,6 +16,17 @@ function Login() {
     const handleSubmit =(event) => {
         event.preventDefault()
         setErrors(validation(values));
+        if(errors.email === "" && errors.password === ""){
+            axios.post('http://localhost:8000/login', values)
+            .then(res => {
+               if(res.data === "success"){
+                navigate('/home')
+               } else {
+                window.alert("No record existed")
+               }
+           })
+           .catch(err => console.log(err))
+       }
     }
   return (
     <div className='d-flex justify-content-center align-items-center bg-primary vh-100'>
